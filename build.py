@@ -42,9 +42,12 @@ if __name__ == "__main__":
     builder.make_dirs(args)
     builder.setup_logger(args)
 
+    # GDB is built with gcc, rather than clang
     builder.install_packages(
         args,
         [
+            "g++-7=7.5.0*",
+            "gcc-7=7.5.0*",
             "libgmp3-dev=2:6.2.*",
         ],
     )
@@ -57,6 +60,9 @@ if __name__ == "__main__":
 
     source_dir = os.path.join(args.source_dir, f"gdb-{args.version}")
     env = builder.create_standard_envvars(args)
+    # GDB is not cross-compiled
+    env["CC"] = "gcc-7"
+    env["CXX"] = "g++-7"
 
     logging.root.info("Configuring build")
     builder.execute(
